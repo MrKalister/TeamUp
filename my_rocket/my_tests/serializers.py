@@ -4,12 +4,7 @@ from .models import EQTestResult, IQTestResult, UniqueLogin
 
 
 class CreateTestSerializer(serializers.ModelSerializer):
-    login = serializers.CharField(source='unique_string', required=False, write_only=True)
-
-    def get_fields(self):
-        fields = super().get_fields()
-        fields['login'].required = False
-        return fields
+    login = serializers.CharField(source='unique_string', read_only=True)
 
     class Meta:
         model = UniqueLogin
@@ -21,7 +16,7 @@ class ResultSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret['login'] = CreateTestSerializer(
-            instance.login).data['unique_string']
+            instance.login).data['login']
         return ret
 
 
@@ -60,7 +55,7 @@ class IQTestResultSerializer(ResultSerializer):
 class GetTestSerializer(serializers.ModelSerializer):
 
     iq_test, eq_test = IQTestResultSerializer(), EQTestResultSerializer()
-    login = serializers.CharField(source='unique_string')
+    login = serializers.CharField(source='unique_string', read_only=True)
 
     class Meta:
         model = UniqueLogin

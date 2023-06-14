@@ -1,5 +1,3 @@
-import secrets
-
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, viewsets
 
@@ -37,16 +35,3 @@ class TestView(mixins.ListModelMixin, mixins.CreateModelMixin,
         if self.request.method == 'POST':
             return CreateTestSerializer
         return GetTestSerializer
-
-    def generate_unique_string(self):
-        alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        while True:
-            gen_string = ''.join(secrets.choice(alphabet) for _ in range(10))
-            if not UniqueLogin.objects.filter(
-                    unique_string=gen_string).exists():
-                break
-        return gen_string
-
-    def create(self, request, *args, **kwargs):
-        request.data['login'] = self.generate_unique_string()
-        return super().create(request, *args, **kwargs)
