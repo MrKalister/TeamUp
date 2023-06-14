@@ -4,7 +4,12 @@ from .models import EQTestResult, IQTestResult, UniqueLogin
 
 
 class CreateTestSerializer(serializers.ModelSerializer):
-    login = serializers.CharField(source='unique_string', read_only=True)
+    login = serializers.CharField(source='unique_string', required=False, write_only=True)
+
+    def get_fields(self):
+        fields = super().get_fields()
+        fields['login'].required = False
+        return fields
 
     class Meta:
         model = UniqueLogin
